@@ -16,7 +16,6 @@ class PostbackButton(object):
         if not self.payload:
             self.payload = self.title
 
-
 @attr.s
 class CallButton(object):
     """
