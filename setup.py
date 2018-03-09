@@ -18,15 +18,15 @@ with open('requirements.txt') as requirements:
 setup(
     name='pymessenger2',
     packages=['pymessenger2'],
-    version='3.0.5',
+    version='3.1.0',
     install_requires=required,
     description="Python Wrapper for Facebook Messenger Platform",
     long_description=long_description,
     author='Charles Crete',
-    author_email='cretezy@gmail.com',
+    author_email='charles@cretezy.com',
     url='https://github.com/Cretezy/pymessenger2',
     license='MIT',
-    download_url='https://github.com/Cretezy/pymessenger2/archive/v3.0.5.tar.gz',
+    download_url='https://github.com/Cretezy/pymessenger2/archive/v3.1.0.tar.gz',
     keywords=[
         'facebook messenger', 'python', 'wrapper', 'bot', 'messenger bot'
     ],
