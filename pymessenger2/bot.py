@@ -5,8 +5,8 @@ import json
 import requests
 from requests_toolbelt import MultipartEncoder
 
-from pymessenger2 import utils
-from pymessenger2.utils import AttrsEncoder
+from . import utils
+from .utils import AttrsEncoder
 
 DEFAULT_API_VERSION = 2.6
 
@@ -21,7 +21,7 @@ class Bot(object):
     def __init__(self,
                  access_token,
                  api_version=DEFAULT_API_VERSION,
-                 app_secret=None):
+                 app_secret=None, proxies={}):
         """
             @required:
                 access_token
@@ -29,6 +29,7 @@ class Bot(object):
                 api_version
                 app_secret
         """
+        self.proxies = proxies
         self.api_version = api_version
         self.app_secret = app_secret
         self.graph_url = 'https://graph.facebook.com/v{0}'.format(
@@ -55,7 +56,9 @@ class Bot(object):
         response = requests.post(
             request_endpoint,
             params=self.auth_args,
-            json=payload
+            json=payload,
+            proxies=self.proxies,
+            verify=False
         )
         result = response.json()
         return result
@@ -116,7 +119,9 @@ class Bot(object):
                 request_endpoint,
                 data=multipart_data,
                 params=self.auth_args,
-                headers=multipart_header).json()
+                headers=multipart_header,
+                proxies=self.proxies,
+                verify=False).json()
 
     def send_attachment_url(self,
                             recipient_id,
@@ -381,7 +386,7 @@ class Bot(object):
         params.update(self.auth_args)
 
         request_endpoint = '{0}/{1}'.format(self.graph_url, recipient_id)
-        response = requests.get(request_endpoint, params=params)
+        response = requests.get(request_endpoint, params=params, proxies=self.proxies, verify=False)
         if response.status_code == 200:
             return response.json()
 
@@ -393,7 +398,9 @@ class Bot(object):
             request_endpoint,
             params=self.auth_args,
             data=json.dumps(payload, cls=AttrsEncoder),
-            headers={'Content-Type': 'application/json'})
+            headers={'Content-Type': 'application/json'},
+            proxies=self.proxies,
+            verify=False)
         result = response.json()
         return result
 
