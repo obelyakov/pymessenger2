@@ -21,7 +21,7 @@ class Bot(object):
     def __init__(self,
                  access_token,
                  api_version=DEFAULT_API_VERSION,
-                 app_secret=None, proxies={}):
+                 app_secret=None, proxies={}, fake_request=False):
         """
             @required:
                 access_token
@@ -29,6 +29,8 @@ class Bot(object):
                 api_version
                 app_secret
         """
+        self.fake_result = None
+        self.fake_requests = fake_request
         self.proxies = proxies
         self.api_version = api_version
         self.app_secret = app_secret
@@ -393,17 +395,25 @@ class Bot(object):
         return None
 
     def send_raw(self, payload):
+        self.fake_result = None
         request_endpoint = '{0}/me/messages'.format(self.graph_url)
-        response = requests.post(
-            request_endpoint,
-            params=self.auth_args,
-            data=json.dumps(payload, cls=AttrsEncoder),
-            headers={'Content-Type': 'application/json'},
-            proxies=self.proxies,
-            verify=False)
-        result = response.json()
-        return result
+        if self.fake_requests:
+            self.fake_result = payload
+            return payload
+        else:
+            response = requests.post(
+                request_endpoint,
+                params=self.auth_args,
+                data=json.dumps(payload, cls=AttrsEncoder),
+                headers={'Content-Type': 'application/json'},
+                proxies=self.proxies,
+                verify=False)
+            result = response.json()
+            return result
 
     def _send_payload(self, payload):
         """ Deprecated, use send_raw instead """
         return self.send_raw(payload)
+
+    def get_testfake_result(self):
+        return self.fake_result
